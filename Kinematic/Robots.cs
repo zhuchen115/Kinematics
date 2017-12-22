@@ -242,13 +242,13 @@ namespace Kinematic
             if (!(robot[0].TransformAxis == TransformType.RotateZ && (robot[1].TransformAxis == TransformType.RotateX||robot[1].TransformAxis==TransformType.RotateY) && robot[2].TransformAxis == TransformType.AxisZ))
                 throw new ArgumentException("The robot configuration cannot be accepted", "robot");
             Vector3F result = new Vector3F();
-            result[2] = Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length - robot[1].Length) * (pos.Z - robot[0].Length)) - robot[1].Length - robot[2].Length;
+            result[2] = Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length)) - robot[1].Length - robot[2].Length;
             robot[2].Transform.Z = result[2];
-            result[1] = Math.Acos((pos.Z - robot[0].Length) / Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length - robot[1].Length) * (pos.Z - robot[0].Length)));
+            result[1] = Math.Acos((pos.Z - robot[0].Length) / Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length)));
 
             if (robot[1].TransformAxis == TransformType.RotateX)
             {
-                result[0] = -Math.Atan2(pos.Y, pos.X);
+                result[0] = Math.Atan2(pos.X, pos.Y);
                 robot[0].Transform.Z = result[0];
                 robot[1].Transform.X = result[1];
             }
@@ -274,8 +274,8 @@ namespace Kinematic
             if (!(robot[0].TransformAxis == TransformType.RotateZ && (robot[1].TransformAxis == TransformType.RotateX )&& robot[2].TransformAxis == TransformType.RotateX))
                 throw new ArgumentException("The robot configuration cannot be accepted", "robot");
             Vector3F result = new Vector3F();
-            result[0] = -Math.Atan2(pos.Y, pos.X);
-            result[1] = Math.PI - Math.Acos((robot[1].Length + pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length) - robot[2].Length) / (2*robot[1].Length*Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length))))-Math.Acos((pos.Z-robot[0].Length)*robot[0].Length/(robot[0].Length*Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length)*(pos.Z - robot[0].Length))));
+            result[0] = Math.Atan2(pos.X, pos.Y);
+            result[1] = Math.PI/2 - Math.Acos((robot[1].Length * robot[1].Length + pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length) - robot[2].Length * robot[2].Length) / (2*robot[1].Length*Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length))))-Math.Asin((pos.Z-robot[0].Length)/Math.Sqrt(pos.X*pos.X+pos.Y*pos.Y+(pos.Z-robot[0].Length)*(pos.Z-robot[0].Length)));
             result[2] = Math.PI - Math.Acos((robot[1].Length * robot[1].Length + robot[2].Length * robot[2].Length - pos.X * pos.X - pos.Y * pos.Y - (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length)) / (2 * robot[1].Length * robot[2].Length));
             robot[0].Transform.Z = result[0];
             robot[1].Transform.X = result[1];
