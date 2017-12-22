@@ -18,6 +18,24 @@ namespace Kinematic
         /// </summary>
         public double Length { get; set; }
 
+        private Vector3F _length_vec
+        {
+            get
+            {
+                switch (_transformtype)
+                {
+                    case TransformType.AxisX:
+                        return new Vector3F(Length, 0, 0);
+                    case TransformType.AxisY:
+                        return new Vector3F(0,Length,0);
+                    case TransformType.AxisZ:
+                        return new Vector3F(0, 0, Length);
+                    default:
+                        throw new ArgumentException("The Transform Type can only on translation", "TranslationJoint.Transform");
+                }
+            }
+        }
+
         public Vector3F Transform {
             get {
                 return _transform;
@@ -63,7 +81,7 @@ namespace Kinematic
         /// <returns></returns>
         public Transform3D GetEndPointState(Transform3D current)
         {
-            Vector3F rvec = _transform.Rotate(current.Rotation);
+            Vector3F rvec = (_transform+_length_vec).Rotate(current.Rotation);
             return new Transform3D(current.Position + rvec, current.Rotation);
         }
     }

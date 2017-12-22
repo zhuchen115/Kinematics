@@ -186,7 +186,7 @@ namespace Kinematic
         /// <param name="robot">The robot configuration</param>
         /// <param name="pos">The robot endpoint position</param>
         /// <returns>The transform in the order of robot joint</returns>
-        public static Vector3F CylindicalInverse(List<IJoint>robot, Vector3F pos)
+        public static Vector3F CylindicalInverse(ref List<IJoint>robot, Vector3F pos)
         {
             if (robot.Count() != 3)
                 throw new ArgumentException("The robot can only have 3 axis", "robot");
@@ -202,7 +202,7 @@ namespace Kinematic
             }
             else
             {
-                vect[0] = Math.Atan2(pos.Y, pos.X);
+                vect[0] = Math.PI/2- Math.Atan2(pos.Y, pos.X);
             }
             robot[0].Transform.Z = vect[0];
             for(int i = 1;i<3;i++)
@@ -210,8 +210,18 @@ namespace Kinematic
                 switch(robot[i].TransformAxis)
                 {
                     case TransformType.AxisZ:
-                        vect[i] = 
+                        vect[i] = pos.Z - robot[0].Length - robot[i].Length;
+                        robot[i].Transform.Z = vect[i];
                         break;
+                    case TransformType.AxisX:
+                        vect[i] = Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y) - robot[i].Length;
+                        robot[i].Transform.X = vect[i];
+                        break;
+                    case TransformType.AxisY:
+                        vect[i] = Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y) - robot[i].Length;
+                        robot[i].Transform.Y = vect[i];
+                        break;
+                    
                 }
             }
 
@@ -219,5 +229,58 @@ namespace Kinematic
 
         }
 
+        /// <summary>
+        /// Calculate the spherical inverse
+        /// </summary>
+        /// <param name="robot"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        public static Vector3F SphericalInverse(ref List<IJoint> robot, Vector3F pos)
+        {
+            if (robot.Count() != 3)
+                throw new ArgumentException("The robot can only have 3 axis", "robot");
+            if (!(robot[0].TransformAxis == TransformType.RotateZ && (robot[1].TransformAxis == TransformType.RotateX||robot[1].TransformAxis==TransformType.RotateY) && robot[2].TransformAxis == TransformType.AxisZ))
+                throw new ArgumentException("The robot configuration cannot be accepted", "robot");
+            Vector3F result = new Vector3F();
+            result[2] = Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length - robot[1].Length) * (pos.Z - robot[0].Length)) - robot[1].Length - robot[2].Length;
+            robot[2].Transform.Z = result[2];
+            result[1] = Math.Acos((pos.Z - robot[0].Length) / Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length - robot[1].Length) * (pos.Z - robot[0].Length)));
+
+            if (robot[1].TransformAxis == TransformType.RotateX)
+            {
+                result[0] = -Math.Atan2(pos.Y, pos.X);
+                robot[0].Transform.Z = result[0];
+                robot[1].Transform.X = result[1];
+            }
+            else
+            {
+                result[0] = Math.PI / 2 - Math.Atan2(pos.Y, pos.X);
+                robot[0].Transform.Z = result[0];
+                robot[1].Transform.Y= result[1];
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Calculate the Articulated Robot Inverse
+        /// </summary>
+        /// <param name="robot">The robot configuration</param>
+        /// <param name="pos">point</param>
+        /// <returns></returns>
+        public static Vector3F ArticulatedInverse(ref List<IJoint> robot, Vector3F pos)
+        {
+            if (robot.Count() != 3)
+                throw new ArgumentException("The robot can only have 3 axis", "robot");
+            if (!(robot[0].TransformAxis == TransformType.RotateZ && (robot[1].TransformAxis == TransformType.RotateX )&& robot[2].TransformAxis == TransformType.RotateX))
+                throw new ArgumentException("The robot configuration cannot be accepted", "robot");
+            Vector3F result = new Vector3F();
+            result[0] = -Math.Atan2(pos.Y, pos.X);
+            result[1] = Math.PI - Math.Acos((robot[1].Length + pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length) - robot[2].Length) / (2*robot[1].Length*Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length))))-Math.Acos((pos.Z-robot[0].Length)*robot[0].Length/(robot[0].Length*Math.Sqrt(pos.X * pos.X + pos.Y * pos.Y + (pos.Z - robot[0].Length)*(pos.Z - robot[0].Length))));
+            result[2] = Math.PI - Math.Acos((robot[1].Length * robot[1].Length + robot[2].Length * robot[2].Length - pos.X * pos.X - pos.Y * pos.Y - (pos.Z - robot[0].Length) * (pos.Z - robot[0].Length)) / (2 * robot[1].Length * robot[2].Length));
+            robot[0].Transform.Z = result[0];
+            robot[1].Transform.X = result[1];
+            robot[2].Transform.X = result[2];
+            return result;
+        }
     }
 }
