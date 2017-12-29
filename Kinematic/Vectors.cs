@@ -198,6 +198,11 @@ namespace Kinematic
             }
         }
 
+        public bool IsValid
+        {
+            get { return !(Double.IsNaN(X) || Double.IsNaN(Y) || Double.IsNaN(Z)); }
+        }
+
     }
 
     /// <summary>
