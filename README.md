@@ -12,6 +12,19 @@ The inverse kinematics only limited to 4 types of robot configuration.
 ## Command line Demostration
 The code to test the accuracy of kinematics calculation can be found [here](https://github.com/zhuchen115/Kinematics/blob/master/KineDemo/Program.cs)
 
+## Build the Project
+ The project is using Visual Studio 2017. You need Visual Studio 2017 to build the project. The community version of Visual Studio is enough.
+  The project 
+
 ## Unity Demo 
 The unity projects is designed on Unity 2017.3.
 Note the axis system used in the unity is left hand axis. The kinematics library is using right hand axis.
+### Building Requirements of Unity Project
+ + Visual Studio 2017
+ + Unity 2017.3
+ **You need to the set the player setting "Scripting Runtime Version" to ".net 4.6 equivlant"**
+### Building Instruction of Unity Project
+ + If you rebuild the Main Kinematics Library. You need to copy the **RELEASE** Version DLL file to the *Assert* **ROOT DIRECTORY**
+ + The project support UWP Release, You need to enable [**developer mode of Windows 10**](https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development) 
+
+
