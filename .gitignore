@@ -259,3 +259,10 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+#Unity
+DemoUnity/[Ll]ibrary/
+DemoUnity/[Tt]emp/
+DemoUnity/[Oo]bj/
+DemoUnity/[Bb]uild/
+DemoUnity/[Bb]uilds/

@@ -10,13 +10,72 @@ public class Buttons : MonoBehaviour {
     public Button btnL, btnR, btnU, btnD, btnI, btnO;
     public Slider th0, th1, th2;
     public GameObject endpoint;
-    public float speed;
 
+    private float speed = 0.1f;
+    private List<IJoint> joints;
     private Vector3F tf3d;
     private bool changed;
 
     // Use this for initialization
     void Start () {
+
+        string[] args = System.Environment.GetCommandLineArgs();
+        double[] inLinkLen = new double[3] { 2, 2, 2 };
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "-link1")
+            {
+                try
+                {
+                    inLinkLen[0] = System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+
+                }
+            }
+            if (args[i] == "-link2")
+            {
+                try
+                {
+                    inLinkLen[1] = System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+                    inLinkLen[1] = 2;
+                }
+            }
+            if (args[i] == "-link3")
+            {
+                try
+                {
+                    inLinkLen[2] = System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+                    inLinkLen[2] = 2;
+                }
+            }
+
+            if (args[i] == "-speed")
+            {
+                try
+                {
+                    speed = (float)System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+                    speed = 0.1f;
+                }
+            }
+        }
+
+        joints = Robots3DOF.GetArticulated(inLinkLen[0], inLinkLen[1], inLinkLen[2]);
+
         btnL.onClick.AddListener(delegate { OnBtnMoveClick(0); });
         btnR.onClick.AddListener(delegate { OnBtnMoveClick(1); });
         btnU.onClick.AddListener(delegate { OnBtnMoveClick(2); });
@@ -50,8 +109,8 @@ public class Buttons : MonoBehaviour {
                 posnew = pos + new Vector3F(0, -speed, 0);
                 break;
         }
-        List<IJoint> joints = Robots3DOF.GetArticulated(2, 2, 2);
-        //Transform3D base_axis = new Transform3D(new Vector3F(0, 0, 0), new Vector3F(0, 0, 0));
+         
+        
 
         tf3d = Robots3DOF.ArticulatedInverse(ref joints, posnew);
         changed = true;

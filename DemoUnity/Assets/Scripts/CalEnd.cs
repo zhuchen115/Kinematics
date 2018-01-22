@@ -13,8 +13,50 @@ public class CalEnd : MonoBehaviour {
     
     // Use this for initialization
     void Start () {
-        joints = Robots3DOF.GetArticulated(2, 2, 2);
         
+        string[] args = System.Environment.GetCommandLineArgs();
+        double[] inLinkLen = new double[3] { 2, 2, 2 };
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "-link1")
+            {
+                try
+                {
+                    inLinkLen[0] = System.Double.Parse(args[i + 1]);
+                }
+                catch {
+                    Debug.LogError("Start Parameter Error");
+                    
+                }
+            }
+            if (args[i] == "-link2")
+            {
+                try
+                {
+                    inLinkLen[1] = System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+                    inLinkLen[1] = 2;
+                }
+            }
+            if (args[i] == "-link3")
+            {
+                try
+                {
+                    inLinkLen[2] = System.Double.Parse(args[i + 1]);
+                }
+                catch
+                {
+                    Debug.LogError("Start Parameter Error");
+                    inLinkLen[2] = 2;
+                }
+            }
+        }
+
+        joints = Robots3DOF.GetArticulated(inLinkLen[0], inLinkLen[1], inLinkLen[2]);
+
     }
 	
 	// Update is called once per frame

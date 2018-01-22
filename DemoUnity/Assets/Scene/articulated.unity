@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.574817, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2123,7 +2123,6 @@ MonoBehaviour:
   th1: {fileID: 2083825167}
   th2: {fileID: 1517511185}
   endpoint: {fileID: 292033899}
-  speed: 0.1
 --- !u!1 &811694481
 GameObject:
   m_ObjectHideFlags: 0
@@ -3732,6 +3731,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1821205466}
+  - component: {fileID: 1821205467}
   m_Layer: 0
   m_Name: joint1
   m_TagString: Untagged
@@ -3755,6 +3755,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1821205467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1821205465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3af083a8a8f65e4c92fd927142a8e5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  link1: {fileID: 1726136067}
+  link2: {fileID: 1843977098}
+  link3: {fileID: 1898794561}
+  joint2: {fileID: 1880637154}
+  joint3: {fileID: 2036761047}
+  endpoint: {fileID: 292033899}
 --- !u!1 &1830799638
 GameObject:
   m_ObjectHideFlags: 0
