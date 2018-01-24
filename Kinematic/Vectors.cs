@@ -48,6 +48,11 @@ namespace Kinematic
         {
             return new Vector3F(vec1.X + vec2.X, vec1.Y + vec2.Y, vec1.Z + vec2.Z);
         }
+        
+        public static Vector3F operator -(Vector3F vec1, Vector3F vec2)
+        {
+            return new Vector3F(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z);
+        }
 
         /// <summary>
         /// A vector times a number
