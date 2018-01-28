@@ -22,7 +22,7 @@ namespace KineDemo
             }
 
             Console.WriteLine("Articulated");
-            Console.WriteLine("The endpoint position is {0}, rotation is {1}", tf3d.Position, tf3d.Rotation);
+            Console.WriteLine("The endpoint position is {0}, rotation is {1}", tf3d.Position - base_axis.Position, tf3d.Rotation);
             Console.WriteLine("Robot Joint Transform: {0}", transform);
             Console.ReadLine();
 
