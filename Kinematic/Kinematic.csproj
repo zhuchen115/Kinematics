@@ -41,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitCal.cs" />
+    <Compile Include="Matrix3F.cs" />
+    <Compile Include="Robot6DOF.cs" />
     <Compile Include="Robots.cs" />
+    <Compile Include="Transform3D.cs" />
     <Compile Include="TranslationJoint.cs" />
     <Compile Include="Vectors.cs" />
     <Compile Include="IJoint.cs" />
