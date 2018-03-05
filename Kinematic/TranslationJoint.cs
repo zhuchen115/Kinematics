@@ -81,8 +81,8 @@ namespace Kinematic
         /// <returns></returns>
         public Transform3D GetEndPointState(Transform3D current)
         {
-            Vector3F rvec = (_transform+_length_vec).Rotate(current.Rotation);
-            return new Transform3D(current.Position + rvec, current.Rotation);
+            Vector3F rvec = current.RotationMat * (_transform+_length_vec);
+            return new Transform3D(current.Position + rvec, current.RotationMat);
         }
     }
 }

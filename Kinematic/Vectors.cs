@@ -45,9 +45,8 @@ namespace Kinematic
         /// <param name="vec2">The second vector</param>
         /// <returns>Add Vector</returns>
         public static Vector3F operator +(Vector3F vec1, Vector3F vec2)
-        {
-            return new Vector3F(vec1.X + vec2.X, vec1.Y + vec2.Y, vec1.Z + vec2.Z);
-        }
+            => new Vector3F(vec1.X + vec2.X, vec1.Y + vec2.Y, vec1.Z + vec2.Z);
+   
         
         /// <summary>
         /// Vector Minus
@@ -56,9 +55,7 @@ namespace Kinematic
         /// <param name="vec2">Second Vector</param>
         /// <returns>Vector</returns>
         public static Vector3F operator -(Vector3F vec1, Vector3F vec2)
-        {
-            return new Vector3F(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z);
-        }
+            => new Vector3F(vec1.X - vec2.X, vec1.Y - vec2.Y, vec1.Z - vec2.Z);
 
         /// <summary>
         /// A vector times a number
@@ -67,8 +64,35 @@ namespace Kinematic
         /// <param name="vec">the vector</param>
         /// <returns>new vector</returns>
         public static Vector3F operator *(double g, Vector3F vec)
+            => new Vector3F(vec.X * g, vec.Y * g, vec.Z * g);
+
+        /// <summary>
+        /// Divide a vector by a number
+        /// </summary>
+        /// <param name="vec">the vector</param>
+        /// <param name="g">the divisor, cannot be 0</param>
+        /// <returns>Divided vector</returns>
+        public static Vector3F operator /(Vector3F vec, double g)
         {
-            return new Vector3F(vec.X * g, vec.Y * g, vec.Z * g);
+            if (g == 0)
+                throw new DivideByZeroException("The divisior cannot be 0");
+            return (1 / g) * vec;
+        }
+
+        /// <summary>
+        /// Get the unit vector of a vector
+        /// </summary>
+        /// <param name="vec">The vector</param>
+        /// <returns>A vector whose length is 1</returns>
+        public static Vector3F UnitVector(Vector3F vec) => vec / vec.Length;
+
+
+        /// <summary>
+        /// Get the unit vector
+        /// </summary>
+        public Vector3F Unit
+        {
+            get  => UnitVector(this);
         }
 
 
@@ -79,10 +103,16 @@ namespace Kinematic
         /// <param name="vec2">vector 2</param>
         /// <returns>The dot product</returns>
         public static double operator *(Vector3F vec1, Vector3F vec2)
-        {
-            return vec1.X * vec2.X + vec1.Y * vec2.Y + vec1.Z * vec2.Z;
-        }
+            => vec1.X * vec2.X + vec1.Y * vec2.Y + vec1.Z * vec2.Z;
 
+        /// <summary>
+        /// Out Product
+        /// </summary>
+        /// <param name="vec1">vector 1</param>
+        /// <param name="vec2">vector 2</param>
+        /// <returns>Out product of 2 vector</returns>
+        public static Vector3F operator ^ (Vector3F vec1,Vector3F vec2)
+            => new Vector3F(vec1.Y * vec2.Z - vec1.Z * vec2.Y, vec1.Z * vec2.X - vec1.X * vec2.Z, vec1.X * vec2.Y - vec1.Y * vec2.X);
 
         /// <summary>
         /// Calculate the angle between vectors
@@ -91,9 +121,8 @@ namespace Kinematic
         /// <param name="vec2">vector 2</param>
         /// <returns>The angle between two vectors</returns>
         public static double Angle(Vector3F vec1, Vector3F vec2)
-        {
-            return Math.Acos((vec1 * vec2) / (vec1.Length * vec2.Length));
-        }
+            => Math.Acos((vec1 * vec2) / (vec1.Length * vec2.Length));
+        
 
         /// <summary>
         /// Calculate the out product of two vectors
@@ -102,15 +131,15 @@ namespace Kinematic
         /// <param name="vec2">vector 2</param>
         /// <returns>result</returns>
         public static Vector3F OutProduct(Vector3F vec1, Vector3F vec2)
-        {
-            return new Vector3F(vec1.Y * vec2.Z - vec1.Z * vec2.Y, vec1.Z * vec2.X - vec1.X * vec2.Z, vec1.X * vec2.Y - vec1.Y * vec2.X);
-        }
+            => new Vector3F(vec1.Y * vec2.Z - vec1.Z * vec2.Y, vec1.Z * vec2.X - vec1.X * vec2.Z, vec1.X * vec2.Y - vec1.Y * vec2.X);
+
 
         /// <summary>
         /// Rotate a vector
         /// </summary>
         /// <param name="rotate">3D rotation </param>
         /// <returns>The rotated vector</returns>
+        [Obsolete("Method is deprecated use the rotation matrix instead")]
         public Vector3F Rotate(Vector3F rotate)
         {
             Vector3F result = (Vector3F)Clone();
@@ -237,66 +266,103 @@ namespace Kinematic
         Spherical
     }
 
-    /// <summary>
-    /// Indicate the state of a rigidbody
-    /// </summary>
-    [Serializable]
-    public class Transform3D : ICloneable
+   
+
+    public class Vector3F2
     {
+        /// <summary>
+        /// The storage of the vectors
+        /// </summary>
+        public Vector3F vec1 = new Vector3F(), vec2 = new Vector3F();
 
         /// <summary>
-        /// Position of point in cartesian
+        /// A quick access of the values 
         /// </summary>
-        public Vector3F Position { get; set; }
-
-        /// <summary>
-        /// Rotation in Eula rotation
-        /// </summary>
-        public Vector3F Rotation { get; set; }
-
-        /// <summary>
-        /// Initial empty state
-        /// </summary>
-        public Transform3D()
+        /// <param name="index">The number 0-5</param>
+        /// <returns></returns>
+        public double this[int index]
         {
-            Position = new Vector3F();
-            Rotation = new Vector3F();
+            get
+            {
+                if (index < 3)
+                    return vec1[index];
+                else
+                    return vec2[index - 3];
+            }
+            set
+            {
+                if (index < 3)
+                    vec1[index] = value;
+                else
+                    vec2[index - 3] = value;
+            }
         }
 
         /// <summary>
-        /// Initial with known postion and rotation vectors
+        /// Implement a vector convention to the array
         /// </summary>
-        /// <param name="pos">position of the ridigbody</param>
-        /// <param name="rotate">rotation of the ridigbody</param>
-        public Transform3D(Vector3F pos, Vector3F rotate)
+        /// <param name="vect"></param>
+        public static implicit operator Vector3F[] (Vector3F2 vect)
         {
-            Position = pos;
-            Rotation = rotate;
+            Vector3F[] vect_l = new Vector3F[2];
+            vect_l[0] = vect.vec1;
+            vect_l[1] = vect.vec2;
+            return vect_l;
         }
+
 
         /// <summary>
-        /// Initial with known postion and rotation vector
+        /// Use the explicit convention from array for the limited size
         /// </summary>
-        /// <param name="x">x value</param>
-        /// <param name="y">y value</param>
-        /// <param name="z">z value</param>
-        /// <param name="rx">x axis rotation</param>
-        /// <param name="ry">y axis rotation</param>
-        /// <param name="rz">z axis rotation</param>
-        public Transform3D(double x, double y, double z, double rx, double ry, double rz)
+        /// <param name="vects"></param>
+        public static explicit operator Vector3F2(Vector3F[] vects)
         {
-            Position = new Vector3F(x, y, z);
-            Rotation = new Vector3F(rx, ry, rz);
-        }
-
-        public object Clone()
-        {
-            return new Transform3D((Vector3F)Position.Clone(), (Vector3F)Rotation.Clone());
+            if (vects.Count() != 2)
+                throw new ArgumentException("Only 2 vector array can be convert to Vector3F2");
+            return new Vector3F2 { vec1 = vects[0], vec2 = vects[1] };
         }
 
         public override string ToString()
+            => String.Format("({0}, {1}, {2}, {3}, {4}, {5})", vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
+
+    }
+
+    public class Vector3F3
+    {
+        private Vector3F[] _vec = new Vector3F[3];
+        
+        public Vector3F this[int index]
         {
-            return String.Format("Pos {0},Rot {1}", Position, Rotation);
+            get
+            {
+                return _vec[index];
+            }
+            set
+            {
+                _vec[index][0] = value[0];
+                _vec[index][1] = value[1];
+                _vec[index][2] = value[2];
+            }
         }
+
+        public Vector3F3(double[] values, bool order = true)
+        {
+            _vec[0] = new Vector3F();
+            _vec[1] = new Vector3F();
+            _vec[2] = new Vector3F();
+            int i = 0;
+            foreach (double val in values)
+            {
+                if (order)
+                    _vec[i / 3][i % 3] = val;
+                else
+                    _vec[i % 3][i / 3] = val;
+                i++;
+                if (i == 9)
+                    break;
+            }
+        }
+
+        public Vector3F3() { }
     }
 }

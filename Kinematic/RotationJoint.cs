@@ -75,31 +75,39 @@ namespace Kinematic
         {
             Transform3D tf3d = new Transform3D();
 
-            //The vector on the local coordinate system
-            Vector3F local_vec = new Vector3F();
+            
             
             //Assume initial state on the z axis
             switch(_transformtype)
             {
-                //The rotation on x axis, clockwise on y-z panel
+                //The rotation on x axis, anti-clockwise on y-z panel
                 case TransformType.RotateX:
-                    local_vec = new Vector3F(0,Length*Math.Sin(_transform.X),Length*Math.Cos(_transform.X));
-                    tf3d.Rotation.X += _transform.X;
+                    
+                    tf3d.RotationMat = new Matrix3F(
+                        1, 0, 0, 
+                        0, Math.Cos(_transform.X), -Math.Sin(_transform.X), 
+                        0, Math.Sin(_transform.X), Math.Cos(_transform.X));
                     break;
-                //The rotation on y axis, clockwise on z-x panel
+                //The rotation on y axis, anti-clockwise on z-x panel
                 case TransformType.RotateY:
-                    local_vec = new Vector3F(-Length * Math.Sin(_transform.Y), 0, Length * Math.Cos(_transform.Y));
-                    tf3d.Rotation.Y += _transform.Y;
+                    tf3d.RotationMat = new Matrix3F(
+                        Math.Cos(_transform.Y),0,Math.Sin(_transform.Y),
+                        0,1,0,
+                        -Math.Sin(_transform.Y),0,Math.Cos(_transform.Y));
                     break;
-                // The rotation on Z axis, clockwise on x-y panel
+                // The rotation on Z axis, anti-clockwise on x-y panel
                 case TransformType.RotateZ:
-                    local_vec = new Vector3F(0, 0, Length);
-                    tf3d.Rotation.Z += _transform.Z;
+                    tf3d.RotationMat = new Matrix3F(
+                        Math.Cos(_transform.Z), -Math.Sin(_transform.Z), 0,
+                        Math.Sin(_transform.Z), Math.Cos(_transform.Z), 0,
+                        0, 0, 1);
                     break;
             }
-            //Rotate the vector to the previous coordinate system
-            tf3d.Position = current.Position + local_vec.Rotate(current.Rotation);
-            tf3d.Rotation += current.Rotation;
+
+            tf3d.RotationMat =   current.RotationMat* tf3d.RotationMat;
+            Vector3F rotvec = tf3d.RotationMat * new Vector3F(0,0,Length);
+
+            tf3d.Position = current.Position + rotvec;
 
             return tf3d;
         }
