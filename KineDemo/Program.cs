@@ -11,19 +11,29 @@ namespace KineDemo
     {
         static void Main(string[] args)
         {
-            List<IJoint> joints = Robots3DOF.GetArticulated(2, 5, 3);
+            List<IJoint> joints = Robot6DOF.Get6DOFRobot(2, 2, 2, 2, 2, 2);
             Transform3D base_axis = new Transform3D(new Vector3F(0, 0, 0), new Vector3F(0, 0, 0));
 
-            Vector3F transform = Robots3DOF.ArticulatedInverse(ref joints, new Vector3F(2.8, 4.2, 3.5));
             Transform3D tf3d = base_axis;
+            tf3d.RotationMat = Matrix3F.GetUnitMatrix();
+
+            joints[0].Transform = new Vector3F(0, 0, Math.PI * 4 / 6);
+            joints[1].Transform = new Vector3F(0, Math.PI * 5 / 6, 0);
+            joints[2].Transform = new Vector3F(0, Math.PI  / 6, 0);
+            joints[3].Transform = new Vector3F(0, 0, Math.PI / 6);
+            joints[4].Transform = new Vector3F(0, Math.PI / 3, 0);
+            joints[5].Transform = new Vector3F(0, 0, Math.PI / 4);
+
             foreach (IJoint jo in joints)
             {
                 tf3d = jo.GetEndPointState(tf3d);
             }
+           
+            Console.WriteLine("6DOF");
 
-            Console.WriteLine("Articulated");
-            Console.WriteLine("The endpoint position is {0}, rotation is {1}", tf3d.Position - base_axis.Position, tf3d.Rotation);
-            Console.WriteLine("Robot Joint Transform: {0}", transform);
+            Vector3F2 transform = Robot6DOF.Inverse6DOF(ref joints, tf3d);
+            Console.WriteLine("The endpoint position is {0}, euler rotation is {1}", tf3d.Position - base_axis.Position, tf3d.Rotation);
+            Console.WriteLine("Robot Joint Transform: {0}", transform.ToString());
             Console.ReadLine();
 
         }
