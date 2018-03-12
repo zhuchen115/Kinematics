@@ -196,6 +196,29 @@ namespace Kinematic
             return String.Format("({0}, {1}, {2})", X, Y, Z);
         }
 
+        private static double _cmpeps = 0.0f;
+        public static double CompareEPS
+        {
+            get=>_cmpeps;
+            set=>_cmpeps = value;
+        }
+
+        public static bool operator == (Vector3F v1,Vector3F v2)
+        {
+            if (Math.Abs(v1.X - v2.X) <= _cmpeps && Math.Abs(v1.Y - v2.Y) <= _cmpeps && Math.Abs(v1.Z - v2.Z) <= _cmpeps)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool operator != (Vector3F v1, Vector3F v2)
+        {
+            if (Math.Abs(v1.X - v2.X) > _cmpeps || Math.Abs(v1.Y - v2.Y) > _cmpeps || Math.Abs(v1.Z - v2.Z) > _cmpeps)
+                return true;
+            else
+                return false;
+        }
+
         /// <summary>
         /// Get the indexers
         /// </summary>
@@ -275,6 +298,16 @@ namespace Kinematic
         /// </summary>
         public Vector3F vec1 = new Vector3F(), vec2 = new Vector3F();
 
+        public Vector3F2(Vector3F vec1, Vector3F vec2)
+        {
+            this.vec1 = vec1 ?? new Vector3F(0,0,0);
+            this.vec2 = vec2 ?? new Vector3F(0,0,0);
+        }
+
+        public Vector3F2()
+        {
+        }
+
         /// <summary>
         /// A quick access of the values 
         /// </summary>
@@ -319,12 +352,29 @@ namespace Kinematic
         {
             if (vects.Count() != 2)
                 throw new ArgumentException("Only 2 vector array can be convert to Vector3F2");
-            return new Vector3F2 { vec1 = vects[0], vec2 = vects[1] };
+            return new Vector3F2 ( vects[0], vects[1] );
         }
 
         public override string ToString()
             => String.Format("({0}, {1}, {2}, {3}, {4}, {5})", vec1[0], vec1[1], vec1[2], vec2[0], vec2[1], vec2[2]);
 
+        public static bool operator == (Vector3F2 v1,Vector3F2 v2)
+        {
+            if (v1.vec1 == v2.vec1 && v1.vec2 == v2.vec2)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool operator !=(Vector3F2 v1, Vector3F2 v2)
+        {
+            if (v1.vec1 != v2.vec1 || v1.vec2 != v2.vec2)
+                return true;
+            else
+                return false;
+        }
+
+        
     }
 
     public class Vector3F3

@@ -65,20 +65,24 @@ namespace Kinematic
                 double y = tvec * new Vector3F(0, 1, 0);
                 double x = tvec * new Vector3F(1, 0, 0);
                 result[0] = Math.Atan2(y,x);
+                result[0] = result[0] + Vector3F.CompareEPS < 0 ? result[0] + Math.PI * 2 : result[0];
                 robot[0].Transform = new Vector3F(0, 0, result[0]);
             }
             {
                 Vector3F tvec = posJ4end - l1 * new Vector3F(0, 0, 1);
                 double ll2 = l2 * l2 + l3 * l3;
                 double csc = (tvec.Length * tvec.Length - ll2) / (2 * l2 * l3);
+                csc = Math.Round(csc, 12);
                 result[2] = Math.Acos(csc);
                 robot[2].Transform = new Vector3F(0,result[2], 0);
             }
             {
                 double A = Math.Sqrt(Math.Pow(l3 * Math.Sin(result[2]), 2) + Math.Pow(l3 * Math.Cos(result[2]) + l2, 2));
-                double t0 = Math.Asin((posJ4end.Z - l1) / A);
+                double asc = (posJ4end.Z - l1) / A;
+                asc = Math.Round(asc, 12);
+                double t0 = Math.Asin(asc);
                 double t1 = Math.Acos((l2 * l2 + A * A - l3 * l3) / (2 * l2 * A));
-                result[1] =  Math.PI / 2 - t0 - t1;
+                result[1] = Math.PI / 2 - t0 - t1;
                 robot[1].Transform = new Vector3F(0, result[1], 0);
             }
             Transform3D base_axis = new Transform3D(new Vector3F(0, 0, 0), new Vector3F(0, 0, 0));
@@ -94,6 +98,7 @@ namespace Kinematic
             result[4] = Math.Acos(vec6z * vec3z);
             robot[4].Transform = new Vector3F(0, result[4], 0);
             result[3] = Math.Atan2( vec6z * vec3y, vec6z * vec3x);
+            result[3] = result[3] + Vector3F.CompareEPS < 0 ? result[3] + Math.PI * 2 : result[3];
             robot[3].Transform = new Vector3F(0, 0, result[3]);
 
             for (int i = 3; i < 5; i++)
@@ -106,6 +111,7 @@ namespace Kinematic
             Vector3F vec6x = transform.RotationMat.Col[0];
 
             result[5] = Math.Atan2(vec6x*vec5y,vec6x*vec5x);
+            result[5] = result[5] + Vector3F.CompareEPS < 0 ? result[5] + Math.PI * 2 : result[5];
             robot[5].Transform = new Vector3F(0, 0, result[5]);
             return result;
         }
